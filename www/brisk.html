@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script src="/js/jquery.js"></script>
+  </head>
+  <body>
+    <h1>
+      Brisk
+    </h1>
+    <hr>
+    <div id="map-container">
+    </div>
+    <hr>
+    <script>
+      function update() {
+        $.ajax('/map.svg.html', {
+          success: function(data) {
+            $('#map-container').html(data);
+            setTimeout(update, 100);
+          }
+        });
+      }
+      
+      update();
+    </script>
+  </body>
+</html>
