@@ -26,6 +26,12 @@ class BriskMap():
     def get_continents(self):
         return self.continents.values()
 
+    def update(self, game_state_data):
+        for territory_data in game_state_data['territories']:
+            territory = self.get_territory(territory_data['territory'])
+            territory.player = Player.get(territory_data['player'])
+            territory.num_armies = territory_data['num_armies']
+
     @staticmethod
     def create(map_layout, game_state_data):
         brisk_map = BriskMap()
@@ -42,11 +48,11 @@ class BriskMap():
         for continent_data in map_layout['continents']:
             territories = [brisk_map.get_territory(territory_id) for territory_id in continent_data['territories']]
             continent = Continent(continent_data['continent'], continent_data['continent_bonus'], continent_data['continent_name'], territories)
+            for territory in territories:
+                territory.continent = continent
             brisk_map.add_continent(continent)
 
-        for territory_data in game_state_data['territories']:
-            territory = brisk_map.get_territory(territory_data['territory'])
-            territory.player = Player.get(territory_data['player'])
-            territory.num_armies
+        brisk_map.update(game_state_data)
 
         return brisk_map
+

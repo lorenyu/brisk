@@ -3,17 +3,24 @@ import urllib2
 
 class Brisk(object):
     HOST = 'http://www.boxcodingchallenge.com'
-    TEAM_NAME = 'box the bunny'
 
-    def __init__(self, game_id=False, bot_id=1):
-        res = self.join_game(game_id, bot_id)
+    def __init__(self, team_name):
+        self.team_name = team_name
+
+    def create_new_game(self):
+        data = { 'join': True, 'team_name': self.team_name, 'no_bot': True }
+        res = self.post(self.url_root(), data)
         self.game_id = res['game']
         self.player_id = res['player']
         self.token = res['token']
+        return res
 
-    def join_game(self, game_id, bot_id):
-        data = { 'join': True, 'team_name': self.TEAM_NAME }
+    def join_game(self, game_id):
+        data = { 'join': True, 'team_name': self.team_name, 'game': game_id, 'no_bot': True }
         res = self.post(self.url_root(), data)
+        self.game_id = res['game']
+        self.player_id = res['player']
+        self.token = res['token']
         return res
 
     def url_root(self):

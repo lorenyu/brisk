@@ -14,6 +14,8 @@ def main(args):
         initial_game_state = brisk.get_game_state()
         if initial_game_state['territories']:
             break
+        print 'trying again'
+        sleep(1)
 
     bot = BriskBot(map_layout=brisk.get_map_layout(), initial_game_state=initial_game_state)
 
