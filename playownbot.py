@@ -1,6 +1,4 @@
-from Brisk import Brisk
-from BriskBot import BriskBot
-from BriskObserver import BriskObserver
+from brisk import *
 import argparse
 from pprint import pprint
 from time import sleep
