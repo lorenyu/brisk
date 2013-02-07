@@ -44,16 +44,6 @@ class BriskMap():
 
         return paths
 
-    def num_armies_next_round(self, player):
-        num_territories = sum([1 for territory in self.get_territories() if territory.player == player])
-        base = int(num_territories / 3)
-        continents = [continent for continent in self.get_continents() if continent.player and continent.player == player]
-        bonus = sum([continent.bonus for continent in continents])
-        return base + bonus
-
-
-
-
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:
             territory = self.get_territory(territory_data['territory'])

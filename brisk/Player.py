@@ -20,7 +20,13 @@ class Player():
     @property
     def continents_with_controlled_territory(self):
         return list(set([territory.continent for territory in self.territories]))
-        
+
+    @property
+    def num_armies_next_round(self):
+        num_territories = len(self.territories)
+        base = int(num_territories / 3)
+        bonus = sum([continent.bonus for continent in self.controlled_continents])
+        return base + bonus
 
     @property
     def num_territories_needed_for_extra_base_armies(self):
