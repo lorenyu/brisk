@@ -35,24 +35,26 @@ class BriskBotB():
 
         self.brisk_map.update(game_state_data)
 
-        print pprint(player.territories)
+        # print pprint(player.territories)
 
         enemy_id = 1 if player_id == 2 else 2
+        enemy = Player.get(enemy_id)
+
         num_enemy_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == enemy_id])
         num_enemy_continents = sum([1 for continent in self.brisk_map.get_continents() if continent.player and continent.player.id == enemy_id])
 
-        print self.num_territories_needed_for_extra_base_armies(player_id)
         print self.brisk_map.num_armies_next_round(enemy)
+        # print self.num_territories_needed_for_extra_base_armies(player_id)
 
-        print 'num_enemy_territories', num_enemy_territories
-        print 'num_enemy_continents', num_enemy_continents
+        # print 'num_enemy_territories', num_enemy_territories
+        # print 'num_enemy_continents', num_enemy_continents
 
         for continent in self.brisk_map.get_continents():
-            print 'territories_needed_for_continent', continent.name
+            # print 'territories_needed_for_continent', continent.name
             territories_needed_for_continent = self.territories_needed_for_continent(player, continent)
-            print [territory.name for territory in territories_needed_for_continent]
-            print 'partitions'
-            pprint(Territory.partition_territories(territories_needed_for_continent))
+            # print [territory.name for territory in territories_needed_for_continent]
+            # print 'partitions'
+            # pprint(Territory.partition_territories(territories_needed_for_continent))
 
 
         continent_to_attack = self.brisk_map.get_continent(6)
@@ -64,13 +66,13 @@ class BriskBotB():
                 for territory in enemy_territory.adjacent_territories:
                     if territory.player.id == player.id:
                         self.territories_with_new_armies.append(territory)
-                        print 'player', player, 'placing', player.num_reserves, 'in', territory
+                        # print 'player', player, 'placing', player.num_reserves, 'in', territory
                         return 'place_armies', {
                             'territory_id': territory.id,
                             'num_armies': player.num_reserves
                         }
                     
-            print 'player', player, 'placing', player.num_reserves, 'in', player.territories[0]
+            # print 'player', player, 'placing', player.num_reserves, 'in', player.territories[0]
             return 'place_armies', {
                 'territory_id': player.territories[0].id,
                 'num_armies': player.num_reserves
@@ -78,25 +80,25 @@ class BriskBotB():
 
         if len(australian_territories) > 0:
             if len(enemy_territories) <= 0:
-                print 'no enemy territories'
+                # print 'no enemy territories'
                 self.territories_with_new_armies = []
                 return 'end_turn', ()
 
             if len(self.territories_with_new_armies) <= 0:
-                print 'no territories with new armies'
+                # print 'no territories with new armies'
                 self.territories_with_new_armies = []
                 return 'end_turn', ()
 
             attacker_territory = self.territories_with_new_armies[0]
             for territory in attacker_territory.adjacent_territories:
-                print territory.name
+                # print territory.name
                 if territory.continent.id == continent_to_attack.id and territory.player.id == enemy_id:
                     defender_territory = territory
                     num_armies = min(attacker_territory.num_armies - 1, 3)
                     if num_armies <= 0:
                         self.territories_with_new_armies = []
                         return 'end_turn', ()
-                    print 'attacking from', attacker_territory.name, 'to', defender_territory.name, 'with', num_armies
+                    # print 'attacking from', attacker_territory.name, 'to', defender_territory.name, 'with', num_armies
                     return 'attack', {
                         'attacker_territory_id': attacker_territory.id,
                         'defender_territory_id': defender_territory.id,
