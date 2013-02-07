@@ -18,6 +18,9 @@ class Continent():
     def __repr__(self):
         return '<Continent:%d:%s>' % (self.id, self.name)
 
+    def __hash__(self):
+        return hash(repr(self))
+
     @property
     def player(self):
         player_ids_in_continent = set()

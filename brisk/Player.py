@@ -26,6 +26,9 @@ class Player():
     def __repr__(self):
         return '<Player:%d>' % self.id
 
+    def __hash__(self):
+        return hash(repr(self))
+
     @staticmethod
     def get(player_id):
         if not Player.players.has_key(player_id):
