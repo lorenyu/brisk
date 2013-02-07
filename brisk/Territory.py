@@ -24,7 +24,7 @@ class Territory():
         return self.id != other.id
 
     def __repr__(self):
-        return '<Territory:%d:%s>' % (self.id, self.name)
+        return '<Territory:' + str(self.id) + ':' + self.name + '>'
 
     def __hash__(self):
         return hash(repr(self))

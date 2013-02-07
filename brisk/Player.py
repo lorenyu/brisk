@@ -1,3 +1,6 @@
+from itertools import groupby
+from operator import itemgetter
+
 class Player():
 
     players = {}
@@ -9,10 +12,11 @@ class Player():
         self.num_armies = 0
         self.num_reserves = 0
         self.territories = []
+        self.territories_by_continent = {}
 
     @property
     def controlled_continents(self):
-        return Player.contained_continents(self.territories)
+        return [continent for continent, territories in self.territories_by_continent.iteritems() if len(continent.territories) == len(territories)]
 
     @property
     def continents_with_controlled_territory(self):
@@ -20,12 +24,22 @@ class Player():
 
     @property
     def num_armies_next_round(self):
-        return Player.num_armies_per_round_with_territories(self.territories)
+        return Player.compute_num_armies_per_round(len(self.territories), self.controlled_continents)
 
     def get_num_armies_next_round_with_extra_territories(self, extra_territories):
-        territories = set(self.territories)
-        territories.update(extra_territories)
-        return Player.num_armies_per_round_with_territories(territories)
+        extra_territories = [territory for territory in extra_territories if territory not in self.territories]
+        extra_territories_by_continent = {}
+        for territory in extra_territories:
+            if not extra_territories_by_continent.has_key(territory.continent):
+                extra_territories_by_continent[territory.continent] = []
+            extra_territories_by_continent[territory.continent].append(territory)
+        continents = []
+        for continent, territories in self.territories_by_continent.iteritems():
+            num_extra_territories_in_continent = len(extra_territories_by_continent[continent]) if extra_territories_by_continent.has_key(continent) else 0
+            if len(territories) + num_extra_territories_in_continent == len(continent.territories):
+                continents.append(continent)
+
+        return Player.compute_num_armies_per_round(len(self.territories) + len(extra_territories), continents)
 
     @property
     def num_territories_needed_for_extra_base_armies(self):
@@ -35,12 +49,27 @@ class Player():
     def territories_needed_for_continent(self, continent):
         return [territory for territory in continent.territories if territory.player != self]
 
+    def reset_territories(self):
+        self.territories = []
+        self.territories_by_continent = {}
+
+    def add_territory(self, territory):
+        if territory in self.territories:
+            return
+        self.territories.append(territory)
+        if not self.territories_by_continent.has_key(territory.continent):
+            self.territories_by_continent[territory.continent] = []
+        self.territories_by_continent[territory.continent].append(territory)
+
+
     def update(self, player_status_data, brisk_map):
         self.is_current_turn = player_status_data['current_turn']
         self.is_eliminated = player_status_data['eliminated']
         self.num_armies = player_status_data['num_armies']
         self.num_reserves = player_status_data['num_reserves']
-        self.territories = [ brisk_map.get_territory(territory_data['territory']) for territory_data in player_status_data['territories'] ]
+        self.reset_territories()
+        for territory_data in player_status_data['territories']:
+            self.add_territory(brisk_map.get_territory(territory_data['territory']))
 
     def __eq__(self, other):
         return self.id == other.id
@@ -49,7 +78,7 @@ class Player():
         return self.id != other.id
 
     def __repr__(self):
-        return '<Player:%d>' % self.id
+        return '<Player:' + str(self.id) + ':' + self.name + '>'
 
     def __hash__(self):
         return hash(repr(self))
@@ -71,4 +100,10 @@ class Player():
         num_territories = len(territories)
         base = int(num_territories / 3)
         bonus = sum([continent.bonus for continent in Player.contained_continents(territories)])
+        return base + bonus
+
+    @staticmethod
+    def compute_num_armies_per_round(num_territories, continents):
+        base = int(num_territories / 3)
+        bonus = sum([continent.bonus for continent in continents])
         return base + bonus

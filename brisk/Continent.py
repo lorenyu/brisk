@@ -16,7 +16,7 @@ class Continent():
         return self.id != other.id
         
     def __repr__(self):
-        return '<Continent:%d:%s>' % (self.id, self.name)
+        return '<Continent:' + str(self.id) + ':' + self.name + '>'
 
     def __hash__(self):
         return hash(repr(self))
