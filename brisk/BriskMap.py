@@ -44,13 +44,6 @@ class BriskMap():
 
         return paths
 
-    def get_paths_accessible_by_player_recursive(self, player, seen_territory_ids):
-        queue = deque()
-        for territory in player.territories:
-            if territory in seen_territory_ids:
-                continue
-            queue.append()
-
 
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:
