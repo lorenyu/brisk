@@ -7,26 +7,34 @@ from collections import deque
 class BriskMap():
 
     def __init__(self):
-        self.territories = {}
-        self.continents = {}
+        self.territories_by_id = {}
+        self.continents_by_id = {}
 
     def add_territory(self, territory):
-        self.territories[territory.id] = territory
+        self.territories_by_id[territory.id] = territory
 
     def add_continent(self, continent):
-        self.continents[continent.id] = continent
+        self.continents_by_id[continent.id] = continent
 
     def get_territory(self, territory_id):
-        return self.territories[territory_id]
+        return self.territories_by_id[territory_id]
+
+    @property
+    def territories(self):
+        return self.territories_by_id.values()
 
     def get_territories(self):
-        return self.territories.values()
+        return self.territories_by_id.values()
 
     def get_continent(self, continent_id):
-        return self.continents[continent_id]
+        return self.continents_by_id[continent_id]
+
+    @property
+    def continents(self):
+        return self.continents_by_id.values()
 
     def get_continents(self):
-        return self.continents.values()
+        return self.continents_by_id.values()
 
     def get_paths_accessible_by_player(self, player):
         paths = []
