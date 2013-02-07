@@ -1,3 +1,4 @@
+from ../brisk import *
 import unittest
 
 class BriskMapTest(unittest.TestCase):

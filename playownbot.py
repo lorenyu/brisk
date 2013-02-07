@@ -1,4 +1,5 @@
 from brisk import *
+from brisk.bots import *
 import argparse
 from pprint import pprint
 from time import sleep
@@ -17,8 +18,8 @@ def main(args):
     initial_game_state = brisks[0].get_game_state()
 
     bots = []
-    bots.append(BriskBot(map_layout=map_layout, initial_game_state=initial_game_state))
-    bots.append(BriskBot(map_layout=map_layout, initial_game_state=initial_game_state))
+    bots.append(BriskBotB(map_layout=map_layout, initial_game_state=initial_game_state))
+    bots.append(SimpleBot(map_layout=map_layout, initial_game_state=initial_game_state))
 
     brisk_observer = BriskObserver()
 

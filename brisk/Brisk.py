@@ -2,7 +2,7 @@ import json
 import urllib2
 
 class Brisk(object):
-    HOST = 'http://www.boxcodingchallenge.com'
+    HOST = 'http://www.briskchallenge.com'
 
     def __init__(self, team_name):
         self.team_name = team_name
