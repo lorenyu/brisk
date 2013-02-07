@@ -60,6 +60,7 @@ class BriskMap():
         player.territories += territories_that_player_does_not_own
         value = player.num_armies_next_round
         player.territories = player.territories[:-len(territories_that_player_does_not_own)]
+        return value
 
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:
