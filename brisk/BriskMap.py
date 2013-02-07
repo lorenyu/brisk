@@ -56,11 +56,7 @@ class BriskMap():
         return paths
 
     def value_if_player_conquered_path(self, player, path):
-        territories_that_player_does_not_own = [territory for territory in path if territory.player != player]
-        player.territories += territories_that_player_does_not_own
-        value = player.num_armies_next_round
-        player.territories = player.territories[:-len(territories_that_player_does_not_own)]
-        return value
+        return float(player.get_num_armies_next_round_with_extra_territories(path))
 
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:

@@ -12,10 +12,7 @@ class Player():
 
     @property
     def controlled_continents(self):
-        controlled_territories = set(self.territories)
-        continents = set([territory.continent for territory in self.territories])
-        controlled_continents = filter(lambda continent: controlled_territories.issuperset(continent.territories), continents)
-        return controlled_continents
+        return Player.contained_continents(self.territories)
 
     @property
     def continents_with_controlled_territory(self):
@@ -23,10 +20,12 @@ class Player():
 
     @property
     def num_armies_next_round(self):
-        num_territories = len(self.territories)
-        base = int(num_territories / 3)
-        bonus = sum([continent.bonus for continent in self.controlled_continents])
-        return base + bonus
+        return Player.num_armies_per_round_with_territories(self.territories)
+
+    def get_num_armies_next_round_with_extra_territories(self, extra_territories):
+        territories = set(self.territories)
+        territories.update(extra_territories)
+        return Player.num_armies_per_round_with_territories(territories)
 
     @property
     def num_territories_needed_for_extra_base_armies(self):
@@ -60,3 +59,16 @@ class Player():
         if not Player.players.has_key(player_id):
             Player.players[player_id] = Player(player_id)
         return Player.players[player_id]
+
+    @staticmethod
+    def contained_continents(territories):
+        territories = set(territories)
+        continents = set([territory.continent for territory in territories])
+        return filter(lambda continent: territories.issuperset(continent.territories), continents)
+
+    @staticmethod
+    def num_armies_per_round_with_territories(territories):
+        num_territories = len(territories)
+        base = int(num_territories / 3)
+        bonus = sum([continent.bonus for continent in Player.contained_continents(territories)])
+        return base + bonus
