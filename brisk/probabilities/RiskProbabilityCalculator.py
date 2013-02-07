@@ -19,6 +19,8 @@ class RiskProbabilityCalculator:
 
         self.diceRolls = [generate_dice_rolls(i) for i in range(0, 4)]
         self.probabilities = self.generate_probabilities()
+
+        self._probability_when_attacking_territory_cache = {}
         pass
 
     def transition((num_attackers,num_defenders), (num_attackers_lost, num_defenders_lost)):
@@ -67,6 +69,8 @@ class RiskProbabilityCalculator:
         return result
 
     def probability_when_attacking_territory(self, (attackers_left, defenders_left), (num_armies_in_attacking_territory, num_armies_in_defending_territory, attacking_strategy)):
+        if self._probability_when_attacking_territory_cache.has_key(((attackers_left, defenders_left), (num_armies_in_attacking_territory, num_armies_in_defending_territory))):
+            return self._probability_when_attacking_territory_cache[(attackers_left, defenders_left), (num_armies_in_attacking_territory, num_armies_in_defending_territory)]
         def Sa(num_armies_in_attacking_territory, num_armies_in_defending_territory):
             return min(3, num_armies_in_attacking_territory - 1, attacking_strategy(num_armies_in_attacking_territory, num_armies_in_defending_territory)) if (num_armies_in_defending_territory > 0 and num_armies_in_attacking_territory > 1) else 0
         a1 = num_armies_in_attacking_territory # initial number of units in attacking territory
@@ -97,7 +101,9 @@ class RiskProbabilityCalculator:
                     #print '\t', la, ld
                     prob += self.probability_when_attacking((la, ld), (na, nd)) * p[a - la - a2][d - ld - d2]
                 p[i][j] = prob
-        return p[a1 - a2][d1 - d2]
+        result = p[a1 - a2][d1 - d2]
+        self._probability_when_attacking_territory_cache[(attackers_left, defenders_left), (num_armies_in_attacking_territory, num_armies_in_defending_territory)] = result
+        return result
 
     def probability_of_conquering_territory(self, (num_armies_in_attacking_territory, num_armies_in_defending_territory, attacking_strategy)):
         a1 = num_armies_in_attacking_territory
