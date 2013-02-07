@@ -35,10 +35,12 @@ class BriskBotB():
         enemy_id = 1 if player.id == 2 else 2
         enemy = Player.get(enemy_id)
 
+        max_armies_in_territory = max([territory.num_armies for territory in player.territories])
+
         if player.num_reserves > 0 and len(player.territories) > 0:
             best_path = None
             best_path_value = 0.0
-            for path in self.brisk_map.get_paths_accessible_by_player(player):
+            for path in self.brisk_map.get_paths_accessible_by_player(player, max_armies_in_territory + player.num_reserves):
                 num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
                 num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
                 probability_of_conquering_territory_path = self.probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))

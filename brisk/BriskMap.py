@@ -39,7 +39,7 @@ class BriskMap():
     def get_player_value(self, player):
         return player.num_armies_next_round
 
-    def get_paths_accessible_by_player(self, player):
+    def get_paths_accessible_by_player(self, player, max_length=9999):
         paths = []
         seen_territory_ids = set()
 
