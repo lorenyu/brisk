@@ -9,14 +9,6 @@ class BriskBotB():
         self.territories_with_new_armies = []
         pass
 
-    def num_enemy_armies_next_round(self, player_id):
-        enemy_id = 1 if player_id == 2 else 2
-        num_enemy_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == enemy_id])
-        base = int(num_enemy_territories / 3)
-        enemy_continents = [continent for continent in self.brisk_map.get_continents() if continent.player and continent.player.id == enemy_id]
-        bonus = sum([continent.bonus for continent in enemy_continents])
-        return base + bonus
-
     def num_territories_needed_for_extra_base_armies(self, player_id):
         num_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == player_id])
         # print 'num_territories', num_territories
@@ -49,8 +41,8 @@ class BriskBotB():
         num_enemy_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == enemy_id])
         num_enemy_continents = sum([1 for continent in self.brisk_map.get_continents() if continent.player and continent.player.id == enemy_id])
 
-        print self.num_enemy_armies_next_round(player_id)
         print self.num_territories_needed_for_extra_base_armies(player_id)
+        print self.brisk_map.num_armies_next_round(enemy)
 
         print 'num_enemy_territories', num_enemy_territories
         print 'num_enemy_continents', num_enemy_continents
