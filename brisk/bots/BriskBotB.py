@@ -35,10 +35,14 @@ class BriskBotB():
 
         self.brisk_map.update(game_state_data)
 
-        # print pprint(player.territories)
-
         enemy_id = 1 if player_id == 2 else 2
         enemy = Player.get(enemy_id)
+
+        # print pprint(player.territories)
+        # print player.controlled_continents
+        # print enemy.continents_with_controlled_territory
+        # print player.num_territories_needed_for_extra_base_armies
+        # print player.territories_needed_for_continent(self.brisk_map.get_continents()[0])
 
         num_enemy_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == enemy_id])
         num_enemy_continents = sum([1 for continent in self.brisk_map.get_continents() if continent.player and continent.player.id == enemy_id])
