@@ -17,6 +17,12 @@ class Player():
         self.num_reserves = player_status_data['num_reserves']
         self.territories = [ brisk_map.get_territory(territory_data['territory']) for territory_data in player_status_data['territories'] ]
 
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return self.id != other.id
+
     def __repr__(self):
         return '<Player:%d>' % self.id
 

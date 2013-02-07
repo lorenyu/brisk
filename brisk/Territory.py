@@ -17,6 +17,12 @@ class Territory():
     def add_adjacent_territory(self, adjacent_territory):
         self.adjacent_territories.append(adjacent_territory)
 
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return self.id != other.id
+
     def __repr__(self):
         return '<Territory:%d:%s>' % (self.id, self.name)
       
