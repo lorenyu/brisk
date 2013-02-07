@@ -22,7 +22,7 @@ def main(args):
 
     bots = []
     bots.append(BriskBotB(brisk_map, players[0]))
-    bots.append(SimpleBot(brisk_map, players[1]))
+    bots.append(BriskBotB(brisk_map, players[1]))
 
     brisk_observer = BriskObserver()
 
