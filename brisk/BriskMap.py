@@ -36,6 +36,9 @@ class BriskMap():
     def get_continents(self):
         return self.continents_by_id.values()
 
+    def get_player_value(self, player):
+        return player.num_armies_next_round
+
     def get_paths_accessible_by_player(self, player):
         paths = []
         seen_territory_ids = set()

@@ -4,17 +4,14 @@ from pprint import pprint
 
 class SimpleBot():
 
-    def __init__(self, map_layout, initial_game_state):
-        self.brisk_map = BriskMap.create(map_layout, initial_game_state)
-        self.territories_with_new_armies = []
+    def __init__(self, brisk_map, player):
+        self.brisk_map = brisk_map
+        self.player = player
         pass
 
-    def compute_next_action(self, player_id, player_status_data, game_state_data):
+    def compute_next_action(self):
 
-        player = Player.get(player_id)
-        player.update(player_status_data, self.brisk_map)
-
-        self.brisk_map.update(game_state_data)
+        player = self.player
 
         if player.num_reserves > 0 and len(player.territories) > 0:
             return 'place_armies', {

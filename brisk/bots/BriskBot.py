@@ -4,8 +4,9 @@ from pprint import pprint
 
 class BriskBot():
 
-    def __init__(self, map_layout, initial_game_state):
-        self.brisk_map = BriskMap.create(map_layout, initial_game_state)
+    def __init__(self, brisk_map, player):
+        self.brisk_map = brisk_map
+        self.player = player
         self.territories_with_new_armies = []
         pass
 
@@ -34,14 +35,14 @@ class BriskBot():
     def units_needed_to_win_partition_from_territory(self, territories_in_partition):
         pass
 
-    def compute_next_action(self, player_id, player_status_data, game_state_data):
+    def compute_next_action(self):
 
-        player = Player.get(player_id)
-        player.update(player_status_data, self.brisk_map)
+        player = self.player
+        player_id = player.id
+        enemy_id = 1 if player.id == 2 else 2
+        enemy = Player.get(enemy_id)
 
         print 'player', player.id
-
-        self.brisk_map.update(game_state_data)
 
         print pprint(player.territories)
 
@@ -68,16 +69,15 @@ class BriskBot():
         australian_territories = [territory for territory in player.territories if territory.continent and territory.continent.id == 6]
 
         if player.num_reserves > 0 and len(player.territories) > 0:
-            if player.id == 1:
-                for enemy_territory in enemy_territories:
-                    for territory in enemy_territory.adjacent_territories:
-                        if territory.player.id == player.id:
-                            self.territories_with_new_armies.append(territory)
-                            print 'player', player, 'placing', player.num_reserves, 'in', territory
-                            return 'place_armies', {
-                                'territory_id': territory.id,
-                                'num_armies': player.num_reserves
-                            }
+            for enemy_territory in enemy_territories:
+                for territory in enemy_territory.adjacent_territories:
+                    if territory.player.id == player.id:
+                        self.territories_with_new_armies.append(territory)
+                        print 'player', player, 'placing', player.num_reserves, 'in', territory
+                        return 'place_armies', {
+                            'territory_id': territory.id,
+                            'num_armies': player.num_reserves
+                        }
                     
             print 'player', player, 'placing', player.num_reserves, 'in', player.territories[0]
             return 'place_armies', {
@@ -85,7 +85,7 @@ class BriskBot():
                 'num_armies': player.num_reserves
             }
 
-        if player.id == 1 and len(australian_territories) > 0:
+        if len(australian_territories) > 0:
             if len(enemy_territories) <= 0:
                 print 'no enemy territories'
                 self.territories_with_new_armies = []

@@ -1,12 +1,13 @@
 from .. import *
+from ..probabilities import *
 
 from pprint import pprint
 
 class BriskBotB():
 
-    def __init__(self, map_layout, initial_game_state):
-        self.brisk_map = BriskMap.create(map_layout, initial_game_state)
-        self.territories_with_new_armies = []
+    def __init__(self, brisk_map, player):
+        self.brisk_map = brisk_map
+        self.player = player
         pass
 
     def num_territories_needed_for_extra_base_armies(self, player_id):
@@ -20,51 +21,14 @@ class BriskBotB():
     def territories_needed_for_each_continent(self, player):
         return [(continent, self.territories_needed_for_continent(player, continent)) for continent in self.brisk_map.get_continents()]
 
-    def probability_of_winning_partition_from_starting_territory_and_num_armies(self, territories_in_partition, starting_territory, num_armies):
-        pass
+    def compute_next_action(self):
 
-    def units_needed_to_win_partition_from_territory(self, territories_in_partition):
-        pass
+        player = self.player
 
-    def compute_next_action(self, player_id, player_status_data, game_state_data):
-
-        player = Player.get(player_id)
-        player.update(player_status_data, self.brisk_map)
-
-        print 'player', player.id
-
-        self.brisk_map.update(game_state_data)
-
-        enemy_id = 1 if player_id == 2 else 2
+        enemy_id = 1 if player.id == 2 else 2
         enemy = Player.get(enemy_id)
 
-        # print pprint(player.territories)
-        # print player.controlled_continents
-        # print enemy.continents_with_controlled_territory
-        # print player.num_territories_needed_for_extra_base_armies
-        # print player.territories_needed_for_continent(self.brisk_map.get_continents()[0])
-        # print 'num armies next round =', player.num_armies_next_round
-
-        num_enemy_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == enemy_id])
-        num_enemy_continents = sum([1 for continent in self.brisk_map.get_continents() if continent.player and continent.player.id == enemy_id])
-
-        # print self.brisk_map.num_armies_next_round(enemy)
-        # print self.num_territories_needed_for_extra_base_armies(player_id)
-
-        # print 'num_enemy_territories', num_enemy_territories
-        # print 'num_enemy_continents', num_enemy_continents
-
-        for continent in self.brisk_map.get_continents():
-            # print 'territories_needed_for_continent', continent.name
-            territories_needed_for_continent = self.territories_needed_for_continent(player, continent)
-            # print [territory.name for territory in territories_needed_for_continent]
-            # print 'partitions'
-            # pprint(Territory.partition_territories(territories_needed_for_continent))
-
-
-        continent_to_attack = self.brisk_map.get_continent(6)
-        enemy_territories = [territory for territory in continent_to_attack.territories if territory.player.id == enemy_id]
-        australian_territories = [territory for territory in player.territories if territory.continent and territory.continent.id == 6]
+        print 'player', player.id
 
         if player.num_reserves > 0 and len(player.territories) > 0:
             for enemy_territory in enemy_territories:
@@ -109,15 +73,6 @@ class BriskBotB():
                         'defender_territory_id': defender_territory.id,
                         'num_attacker_armies': num_armies
                     }
-        
-        # find the continent that is easiest to take over
-        # look at the enemy controlled territories in that continent,
-        # and the adjacent territories that we control
-        # and take the total number of units we can use to attack
-        # minus the total number of enemy units
-        # minus the number of enemy territories
-
-        # game_state = BriskGameState.create_from_game_state_data(game_state_data)
         
         self.territories_with_new_armies = []
         return 'end_turn', ()

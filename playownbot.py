@@ -14,33 +14,42 @@ def main(args):
     brisks[0].create_new_game()
     brisks[1].join_game(brisks[0].game_id)
 
+    players = [Player.get(brisk.player_id) for brisk in brisks]
+
     map_layout = brisks[0].get_map_layout()
     initial_game_state = brisks[0].get_game_state()
+    brisk_map = BriskMap.create(map_layout, initial_game_state)
 
     bots = []
-    bots.append(BriskBotB(map_layout=map_layout, initial_game_state=initial_game_state))
-    bots.append(SimpleBot(map_layout=map_layout, initial_game_state=initial_game_state))
+    bots.append(BriskBot(brisk_map, players[0]))
+    bots.append(SimpleBot(brisk_map, players[1]))
 
     brisk_observer = BriskObserver()
 
     i = 0
-    while True:
-
-        bot = bots[i]
-        brisk = brisks[i]
+    while True:        
 
         player_status = brisk.get_player_status()
 
-        if player_status['eliminated']:
+        game_state = brisk.get_game_state()
+        brisk_map.update(game_state)
+        for brisk, player in zip(brisks, players):
+            player.update(brisk.get_player_status(), brisk_map)
+
+        bot = bots[i]
+        brisk = brisks[i]
+        player = players[i]
+
+        if player.is_eliminated:
             print 'Player eliminated'
             break
 
-        if not player_status['current_turn']:
+        if not player.is_current_turn:
             i = (i + 1) % 2
             sleep(1)
             continue
 
-        action, params = bot.compute_next_action(brisk.player_id, brisk.get_player_status(), brisk.get_game_state())
+        action, params = bot.compute_next_action()
 
         print 'bot ', i, 'does', action, params
 
