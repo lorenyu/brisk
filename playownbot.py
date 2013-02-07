@@ -51,7 +51,7 @@ def main(args):
 
         action, params = bot.compute_next_action()
 
-        print 'bot ', i, 'does', action, params
+        print 'player ', player.id, action, params
 
         if action == 'place_armies':
             territory = params['territory']
