@@ -8,6 +8,7 @@ class BriskBotB():
     def __init__(self, brisk_map, player):
         self.brisk_map = brisk_map
         self.player = player
+        self.probability_calculator = RiskProbabilityCalculator()
         pass
 
     def num_territories_needed_for_extra_base_armies(self, player_id):
@@ -24,6 +25,7 @@ class BriskBotB():
     def compute_next_action(self):
 
         player = self.player
+        brisk_map = self.brisk_map
 
         enemy_id = 1 if player.id == 2 else 2
         enemy = Player.get(enemy_id)
@@ -31,48 +33,43 @@ class BriskBotB():
         print 'player', player.id
 
         if player.num_reserves > 0 and len(player.territories) > 0:
-            for enemy_territory in enemy_territories:
-                for territory in enemy_territory.adjacent_territories:
-                    if territory.player.id == player.id:
-                        self.territories_with_new_armies.append(territory)
-                        # print 'player', player, 'placing', player.num_reserves, 'in', territory
-                        return 'place_armies', {
-                            'territory_id': territory.id,
-                            'num_armies': player.num_reserves
-                        }
-                    
-            # print 'player', player, 'placing', player.num_reserves, 'in', player.territories[0]
+            best_path = None
+            best_path_value = 0.0
+            for path in self.brisk_map.get_paths_accessible_by_player(player):
+                num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
+                num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
+                probability_of_conquering_territory_path = self.probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
+                value_of_conquering_territory_path = brisk_map.value_if_player_conquered_path(player, path)
+                if value_of_conquering_territory_path * probability_of_conquering_territory_path > best_path_value:
+                    best_path = path
+                    best_path_value = value_of_conquering_territory_path * probability_of_conquering_territory_path
+
             return 'place_armies', {
-                'territory_id': player.territories[0].id,
+                'territory': best_path[0],
                 'num_armies': player.num_reserves
             }
 
-        if len(australian_territories) > 0:
-            if len(enemy_territories) <= 0:
-                # print 'no enemy territories'
-                self.territories_with_new_armies = []
-                return 'end_turn', ()
+        best_path = None
+        best_path_value = 0.0
+        for path in self.brisk_map.get_paths_accessible_by_player(player):
+            if len(path) <= 1:
+                continue
+            num_armies_in_attacking_territory = path[0].num_armies
+            num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
+            probability_of_conquering_territory_path = self.probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
+            value_of_conquering_territory_path = brisk_map.value_if_player_conquered_path(player, path)
+            if value_of_conquering_territory_path * probability_of_conquering_territory_path > best_path_value:
+                best_path = path
+                best_path_value = value_of_conquering_territory_path * probability_of_conquering_territory_path
 
-            if len(self.territories_with_new_armies) <= 0:
-                # print 'no territories with new armies'
-                self.territories_with_new_armies = []
-                return 'end_turn', ()
-
-            attacker_territory = self.territories_with_new_armies[0]
-            for territory in attacker_territory.adjacent_territories:
-                # print territory.name
-                if territory.continent.id == continent_to_attack.id and territory.player.id == enemy_id:
-                    defender_territory = territory
-                    num_armies = min(attacker_territory.num_armies - 1, 3)
-                    if num_armies <= 0:
-                        self.territories_with_new_armies = []
-                        return 'end_turn', ()
-                    # print 'attacking from', attacker_territory.name, 'to', defender_territory.name, 'with', num_armies
-                    return 'attack', {
-                        'attacker_territory_id': attacker_territory.id,
-                        'defender_territory_id': defender_territory.id,
-                        'num_attacker_armies': num_armies
-                    }
+        if best_path:
+            attacker_territory = best_path[0].id
+            defender_territory = best_path[1].id
+            return 'attack', {
+                'attacker_territory': attacker_territory,
+                'defender_territory': defender_territory,
+                'num_attacker_armies': attacker_territory.num_armies - 1
+            }
         
         self.territories_with_new_armies = []
         return 'end_turn', ()

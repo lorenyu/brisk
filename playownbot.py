@@ -21,7 +21,7 @@ def main(args):
     brisk_map = BriskMap.create(map_layout, initial_game_state)
 
     bots = []
-    bots.append(BriskBot(brisk_map, players[0]))
+    bots.append(BriskBotB(brisk_map, players[0]))
     bots.append(SimpleBot(brisk_map, players[1]))
 
     brisk_observer = BriskObserver()
@@ -54,9 +54,23 @@ def main(args):
         print 'bot ', i, 'does', action, params
 
         if action == 'place_armies':
-            brisk.place_armies(params['territory_id'], params['num_armies'])
+            territory = params['territory']
+            if territory.player != player:
+                print 'Cannot put armies on territory', territory, 'owned by', territory.player
+                continue
+            num_armies = min(params['num_armies'], player.num_reserves)
+            if num_armies <= 0:
+                print 'Cannot place zero armies'
+                continue
+            brisk.place_armies(territory.id, num_armies)
         elif action == 'attack':
-            brisk.attack(params['attacker_territory_id'], params['defender_territory_id'], params['num_attacker_armies'])
+            attacker_territory = params['attacker_territory']
+            defender_territory = params['defender_territory']
+            num_armies = min(params['num_attacker_armies'], attacker_territory.num_armies - 1, 3)
+            if num_armies <= 0:
+                print 'Cannot attack with zero armies'
+                continue
+            brisk.attack(attacker_territory.id, defender_territory.id, num_armies)
         elif action == 'transfer_armies':
             i = (i + 1) % 2
             brisk.transfer_armies(params['from_territory_id'], params['to_territory_id'], params['num_armies'])

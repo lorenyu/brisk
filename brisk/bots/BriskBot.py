@@ -75,13 +75,13 @@ class BriskBot():
                         self.territories_with_new_armies.append(territory)
                         print 'player', player, 'placing', player.num_reserves, 'in', territory
                         return 'place_armies', {
-                            'territory_id': territory.id,
+                            'territory': territory,
                             'num_armies': player.num_reserves
                         }
                     
             print 'player', player, 'placing', player.num_reserves, 'in', player.territories[0]
             return 'place_armies', {
-                'territory_id': player.territories[0].id,
+                'territory': player.territories[0],
                 'num_armies': player.num_reserves
             }
 
@@ -107,8 +107,8 @@ class BriskBot():
                         return 'end_turn', ()
                     print 'attacking from', attacker_territory.name, 'to', defender_territory.name, 'with', num_armies
                     return 'attack', {
-                        'attacker_territory_id': attacker_territory.id,
-                        'defender_territory_id': defender_territory.id,
+                        'attacker_territory': attacker_territory,
+                        'defender_territory': defender_territory,
                         'num_attacker_armies': num_armies
                     }
         

@@ -15,7 +15,7 @@ class SimpleBot():
 
         if player.num_reserves > 0 and len(player.territories) > 0:
             return 'place_armies', {
-                'territory_id': player.territories[0].id,
+                'territory': player.territories[0],
                 'num_armies': player.num_reserves
             }
         
