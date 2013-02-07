@@ -2,6 +2,8 @@ from Territory import Territory
 from Continent import Continent
 from Player import Player
 
+from collections import deque
+
 class BriskMap():
 
     def __init__(self):
@@ -25,6 +27,30 @@ class BriskMap():
 
     def get_continents(self):
         return self.continents.values()
+
+    def get_paths_accessible_by_player(self, player):
+        paths = []
+        seen_territory_ids = set()
+
+        partial_paths = deque()
+        for territory in player.territories:
+            partial_paths.append((territory,))
+        while len(partial_paths) > 0:
+            path = partial_paths.popleft()
+            paths.append(path)
+            for territory in path[-1].adjacent_territories:
+                if territory.player != player and territory not in path:
+                    partial_paths.append(path + (territory,))
+
+        return paths
+
+    def get_paths_accessible_by_player_recursive(self, player, seen_territory_ids):
+        queue = deque()
+        for territory in player.territories:
+            if territory in seen_territory_ids:
+                continue
+            queue.append()
+
 
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:
