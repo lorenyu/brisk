@@ -10,6 +10,7 @@ class BriskBotB():
         self.brisk_map = brisk_map
         self.player = player
         self.probability_calculator = RiskProbabilityCalculator()
+        self.last_move = None
         pass
 
     def num_territories_needed_for_extra_base_armies(self, player_id):
@@ -23,6 +24,9 @@ class BriskBotB():
     def territories_needed_for_each_continent(self, player):
         return [(continent, self.territories_needed_for_continent(player, continent)) for continent in self.brisk_map.get_continents()]
 
+    def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
+        return attacker_territory.num_armies - 1
+
     def compute_next_action(self):
 
         player = self.player
@@ -30,8 +34,6 @@ class BriskBotB():
 
         enemy_id = 1 if player.id == 2 else 2
         enemy = Player.get(enemy_id)
-
-        print 'player', player.id
 
         if player.num_reserves > 0 and len(player.territories) > 0:
             best_path = None
@@ -50,7 +52,7 @@ class BriskBotB():
                 territory = best_path[0]
             else:
                 territory = player.territories[0]
-            pprint(best_path)
+            # pprint(best_path)
             return 'place_armies', {
                 'territory': territory,
                 'num_armies': player.num_reserves
@@ -71,14 +73,14 @@ class BriskBotB():
                 best_path_value = path_value
 
         if best_path:
-            pprint(best_path)
             attacker_territory = best_path[0]
             defender_territory = best_path[1]
-            return 'attack', {
-                'attacker_territory': attacker_territory,
-                'defender_territory': defender_territory,
-                'num_attacker_armies': attacker_territory.num_armies - 1
-            }
+            if attacker_territory.num_armies >= 4:
+                return 'attack', {
+                    'attacker_territory': attacker_territory,
+                    'defender_territory': defender_territory,
+                    'num_attacker_armies': attacker_territory.num_armies - 1
+                }
         
         self.territories_with_new_armies = []
         return 'end_turn', ()

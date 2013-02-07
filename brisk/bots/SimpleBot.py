@@ -9,6 +9,9 @@ class SimpleBot():
         self.player = player
         pass
 
+    def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
+        return 0
+
     def compute_next_action(self):
 
         player = self.player

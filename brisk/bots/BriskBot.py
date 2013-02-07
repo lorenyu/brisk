@@ -35,6 +35,9 @@ class BriskBot():
     def units_needed_to_win_partition_from_territory(self, territories_in_partition):
         pass
 
+    def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
+        return attacker_territory.num_armies - 1
+
     def compute_next_action(self):
 
         player = self.player
