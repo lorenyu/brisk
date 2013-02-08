@@ -27,15 +27,14 @@ class Player():
         return Player.compute_num_armies_per_round(len(self.territories), self.controlled_continents)
 
     def get_num_armies_next_round_with_extra_territories(self, extra_territories):
-        extra_territories = [territory for territory in extra_territories if territory not in self.territories]
-        extra_territories_by_continent = {}
+        extra_territories_by_continent_id = {}
         for territory in extra_territories:
-            if not extra_territories_by_continent.has_key(territory.continent):
-                extra_territories_by_continent[territory.continent] = []
-            extra_territories_by_continent[territory.continent].append(territory)
+            if not extra_territories_by_continent_id.has_key(territory.continent.id):
+                extra_territories_by_continent_id[territory.continent.id] = []
+            extra_territories_by_continent_id[territory.continent.id].append(territory)
         continents = []
         for continent, territories in self.territories_by_continent.iteritems():
-            num_extra_territories_in_continent = len(extra_territories_by_continent[continent]) if extra_territories_by_continent.has_key(continent) else 0
+            num_extra_territories_in_continent = len(extra_territories_by_continent_id[continent.id]) if extra_territories_by_continent_id.has_key(continent,id) else 0
             if len(territories) + num_extra_territories_in_continent == len(continent.territories):
                 continents.append(continent)
 

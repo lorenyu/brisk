@@ -13,16 +13,17 @@ class BriskBotB():
         self.last_move = None
         pass
 
-    def num_territories_needed_for_extra_base_armies(self, player_id):
-        num_territories = sum([1 for territory in self.brisk_map.get_territories() if territory.player.id == player_id])
-        # print 'num_territories', num_territories
-        return 3 - (num_territories % 3)
-
-    def territories_needed_for_continent(self, player, continent):
-        return [territory for territory in continent.territories if territory.player.id != player.id]
-
-    def territories_needed_for_each_continent(self, player):
-        return [(continent, self.territories_needed_for_continent(player, continent)) for continent in self.brisk_map.get_continents()]
+    def compute_path_value(self, path, brisk_map, player, enemy):
+        brisk_map.save()
+        print player.num_armies_next_round - enemy.num_armies_next_round
+        for territory in path[1:]:
+            territory.player = player
+        value = player.num_armies_next_round - enemy.num_armies_next_round
+        print player.num_armies_next_round - enemy.num_armies_next_round
+        brisk_map.load()
+        print player.num_armies_next_round - enemy.num_armies_next_round
+        print '---------------'
+        return value
 
     def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
         return attacker_territory.num_armies - 1
@@ -44,7 +45,7 @@ class BriskBotB():
                 num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
                 num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
                 probability_of_conquering_territory_path = self.probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
-                value_of_conquering_territory_path = brisk_map.value_if_player_conquered_path(player, path)
+                value_of_conquering_territory_path = self.compute_path_value(path, brisk_map, player, enemy)
                 path_value = value_of_conquering_territory_path * probability_of_conquering_territory_path + player.num_armies_next_round * (1.0 - probability_of_conquering_territory_path)
                 if path_value > best_path_value:
                     best_path = path
@@ -68,7 +69,7 @@ class BriskBotB():
             num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
             num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
             probability_of_conquering_territory_path = self.probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
-            value_of_conquering_territory_path = brisk_map.value_if_player_conquered_path(player, path)
+            value_of_conquering_territory_path = self.compute_path_value(path, brisk_map, player, enemy)
             path_value = value_of_conquering_territory_path * probability_of_conquering_territory_path + player.num_armies_next_round * (1.0 - probability_of_conquering_territory_path)
             if path_value > best_path_value:
                 best_path = path

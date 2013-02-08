@@ -1,14 +1,18 @@
 from Territory import Territory
 from Continent import Continent
 from Player import Player
+from Path import Path
 
 from collections import deque
+from copy import deepcopy
 
 class BriskMap():
 
     def __init__(self):
         self.territories_by_id = {}
         self.continents_by_id = {}
+        self.prev_territories_by_id = {}
+        self.prev_continents_by_id = {}
 
     def add_territory(self, territory):
         self.territories_by_id[territory.id] = territory
@@ -36,9 +40,6 @@ class BriskMap():
     def get_continents(self):
         return self.continents_by_id.values()
 
-    def get_player_value(self, player):
-        return player.num_armies_next_round
-
     def get_paths_accessible_by_player(self, player, max_length=9999):
         paths = []
         seen_territory_ids = set()
@@ -48,7 +49,7 @@ class BriskMap():
             partial_paths.append((territory,))
         while len(partial_paths) > 0:
             path = partial_paths.popleft()
-            paths.append(path)
+            paths.append(Path(path))
             for territory in path[-1].adjacent_territories:
                 if territory.player != player and territory not in path:
                     partial_paths.append(path + (territory,))
@@ -56,7 +57,15 @@ class BriskMap():
         return paths
 
     def value_if_player_conquered_path(self, player, path):
-        return float(player.get_num_armies_next_round_with_extra_territories(path))
+        return float(player.get_num_armies_next_round_with_extra_territories(path[1:]))
+
+    def save(self):
+        self.prev_territories_by_id = deepcopy(self.territories_by_id)
+        self.prev_continents_by_id = deepcopy(self.continents_by_id)
+
+    def load(self):
+        self.territories_by_id = self.prev_territories_by_id
+        self.continents_by_id = self.prev_continents_by_id
 
     def update(self, game_state_data):
         for territory_data in game_state_data['territories']:
