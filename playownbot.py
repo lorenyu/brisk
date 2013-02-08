@@ -3,6 +3,7 @@ from brisk.bots import *
 import argparse
 from pprint import pprint
 from time import sleep
+import urllib2
 
 def main(args):
     # if args.game_id:
@@ -29,64 +30,67 @@ def main(args):
     i = 0
     while True:        
 
-        player_status = brisk.get_player_status()
+        try:
+            player_status = brisk.get_player_status()
 
-        game_state = brisk.get_game_state()
-        brisk_map.update(game_state)
-        for brisk, player in zip(brisks, players):
-            player.update(brisk.get_player_status(), brisk_map)
+            game_state = brisk.get_game_state()
+            brisk_map.update(game_state)
+            for brisk, player in zip(brisks, players):
+                player.update(brisk.get_player_status(), brisk_map)
 
-        bot = bots[i]
-        brisk = brisks[i]
-        player = players[i]
+            bot = bots[i]
+            brisk = brisks[i]
+            player = players[i]
 
-        if player.is_eliminated:
-            print 'Player eliminated'
-            break
+            if player.is_eliminated:
+                print 'Player eliminated'
+                break
 
-        if not player.is_current_turn:
-            i = (i + 1) % 2
-            sleep(1)
-            continue
-
-        action, params = bot.compute_next_action()
-
-        if action == 'place_armies':
-            territory = params['territory']
-            if territory.player != player:
-                print 'Cannot put armies on territory', territory, 'owned by', territory.player
+            if not player.is_current_turn:
+                i = (i + 1) % 2
+                sleep(1)
                 continue
-            num_armies = min(params['num_armies'], player.num_reserves)
-            if num_armies <= 0:
-                print 'Cannot place zero armies'
-                continue
-            print 'player ', player.id, 'placed', num_armies, 'in', territory
-            brisk.place_armies(territory.id, num_armies)
-        elif action == 'attack':
-            attacker_territory = params['attacker_territory']
-            defender_territory = params['defender_territory']
-            num_armies = min(params['num_attacker_armies'], attacker_territory.num_armies - 1, 3)
-            if num_armies <= 0:
-                print 'Cannot attack with zero armies'
-                continue
-            print 'player ', player.id, 'attacked', defender_territory, 'from', attacker_territory
-            result = brisk.attack(attacker_territory.id, defender_territory.id, num_armies)
-            if result['defender_territory_captured']:
-                attacker_territory.num_armies = result['attacker_territory_armies_left']
-                defender_territory.num_armies = result['defender_territory_armies_left']
-                num_armies = bot.compute_num_armies_to_transfer(attacker_territory, defender_territory)
-                print 'player ', player.id, 'transferred', num_armies, 'armies from', attacker_territory, 'to', defender_territory
-                if num_armies > 0:
-                    brisk.transfer_armies(attacker_territory.id, defender_territory.id, num_armies)
-        elif action == 'transfer_armies':
-            i = (i + 1) % 2
-            brisk.transfer_armies(params['from_territory_id'], params['to_territory_id'], params['num_armies'])
-        elif action == 'end_turn':
-            i = (i + 1) % 2
-            print 'player ', player.id, 'ended their turn'
-            brisk.end_turn()
-        
-        brisk_observer.update(brisk)
+
+            action, params = bot.compute_next_action()
+
+            if action == 'place_armies':
+                territory = params['territory']
+                if territory.player != player:
+                    print 'Cannot put armies on territory', territory, 'owned by', territory.player
+                    continue
+                num_armies = min(params['num_armies'], player.num_reserves)
+                if num_armies <= 0:
+                    print 'Cannot place zero armies'
+                    continue
+                print 'player ', player.id, 'placed', num_armies, 'in', territory
+                brisk.place_armies(territory.id, num_armies)
+            elif action == 'attack':
+                attacker_territory = params['attacker_territory']
+                defender_territory = params['defender_territory']
+                num_armies = min(params['num_attacker_armies'], attacker_territory.num_armies - 1, 3)
+                if num_armies <= 0:
+                    print 'Cannot attack with zero armies'
+                    continue
+                print 'player ', player.id, 'attacked', defender_territory, 'from', attacker_territory
+                result = brisk.attack(attacker_territory.id, defender_territory.id, num_armies)
+                if result['defender_territory_captured']:
+                    attacker_territory.num_armies = result['attacker_territory_armies_left']
+                    defender_territory.num_armies = result['defender_territory_armies_left']
+                    num_armies = bot.compute_num_armies_to_transfer(attacker_territory, defender_territory)
+                    print 'player ', player.id, 'transferred', num_armies, 'armies from', attacker_territory, 'to', defender_territory
+                    if num_armies > 0:
+                        brisk.transfer_armies(attacker_territory.id, defender_territory.id, num_armies)
+            elif action == 'transfer_armies':
+                i = (i + 1) % 2
+                brisk.transfer_armies(params['from_territory_id'], params['to_territory_id'], params['num_armies'])
+            elif action == 'end_turn':
+                i = (i + 1) % 2
+                print 'player ', player.id, 'ended their turn'
+                brisk.end_turn()
+            
+            brisk_observer.update(brisk)
+        except urllib2.HTTPError, e:
+            print e
 
 
 parser = argparse.ArgumentParser()
