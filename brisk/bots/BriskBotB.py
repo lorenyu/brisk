@@ -146,7 +146,7 @@ class BriskBotB():
         if best_path:
             attacker_territory = best_path[0]
             defender_territory = best_path[1]
-            if attacker_territory.num_armies >= 4:
+            if attacker_territory.num_armies - 1 > defender_territory.num_armies:
                 return 'attack', {
                     'attacker_territory': attacker_territory,
                     'defender_territory': defender_territory,
