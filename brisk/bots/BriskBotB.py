@@ -172,6 +172,8 @@ class BriskBotB():
             for territory in front.adjacent_territories:
                 if territory.player != player:
                     continue
+                if territory in fronts:
+                    continue
                 if ( territory.num_armies - 1 ) > delta_to_front:
                     delta_to_front = territory.num_armies - 1
                     src_territory = territory
