@@ -52,7 +52,7 @@ class BriskMap():
             path = partial_paths.popleft()
 
             # prune paths that have less than 5% chance of being conquered
-            if path.probability_of_conquering_path < 0.05:
+            if path.probability_of_conquering_path < 0.03:
                 continue
 
             paths.append(path)
