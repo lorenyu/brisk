@@ -17,6 +17,9 @@ def main(args):
 
     players = [Player.get(brisk.player_id) for brisk in brisks]
 
+    while not brisk.get_player_status()['current_turn']:
+        sleep(1)
+
     map_layout = brisks[0].get_map_layout()
     initial_game_state = brisks[0].get_game_state()
     brisk_map = BriskMap.create(map_layout, initial_game_state)
