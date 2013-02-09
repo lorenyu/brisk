@@ -47,6 +47,7 @@ def main(args):
                 break
 
             if not player.is_current_turn:
+                print 'Not player', i,"'s turn"
                 i = (i + 1) % 2
                 sleep(1)
                 continue
@@ -90,6 +91,7 @@ def main(args):
             
             brisk_observer.update(brisk)
         except urllib2.HTTPError, e:
+            i = (i + 1) % 2
             print e
 
 
