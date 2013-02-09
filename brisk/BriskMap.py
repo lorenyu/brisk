@@ -11,6 +11,7 @@ class BriskMap():
         self.territories_by_id = {}
         self.continents_by_id = {}
 
+        self.num_players = 0
     def add_territory(self, territory):
         self.territories_by_id[territory.id] = territory
 
