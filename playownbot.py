@@ -84,7 +84,11 @@ def main(args):
                         brisk.transfer_armies(attacker_territory.id, defender_territory.id, num_armies)
             elif action == 'transfer_armies':
                 i = (i + 1) % 2
-                brisk.transfer_armies(params['from_territory_id'], params['to_territory_id'], params['num_armies'])
+                from_territory = params['from_territory']
+                to_territory = params['to_territory']
+                num_armies = params['num_armies']
+                brisk.transfer_armies( from_territory.id, to_territory.id, num_armies )
+                print "player ", player.id, 'fortified ', num_armies, 'armies from ', from_territory, 'to', to_territory
             elif action == 'end_turn':
                 i = (i + 1) % 2
                 print 'player ', player.id, 'ended their turn'

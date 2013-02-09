@@ -160,6 +160,29 @@ class BriskBotB():
                 }
         
         self.territories_with_new_armies = []
+        # Try fortifying territories
+        temp_map_state = TempMapState( self.brisk_map )
+        temp_map_state.compute_map_values()
+        fronts = temp_map_state.fronts_for_player( self.player )
+        territories = self.player.territories
+        delta_to_front = 0
+        src_territory = None
+        dst_territory = None
+        for front in fronts:
+            for territory in territories:
+                if territory in fronts:
+                    continue
+                if front.is_adjacent_to( territory ):
+                    if ( territory.num_armies - 1 ) > delta_to_front:
+                        delta_to_front = territory.num_armies - 1
+                        src_territory = territory
+                        dst_territory = front
+            if dst_territory and src_territory:
+                return 'transfer_armies', {
+                    'from_territory': src_territory,
+                    'to_territory': dst_territory,
+                    'num_armies': delta_to_front
+                    }
         return 'end_turn', ()
 
 class ContinentStats():
