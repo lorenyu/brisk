@@ -1,6 +1,7 @@
 from Territory import Territory
 from Continent import Continent
 from Player import Player
+from Path import Path
 
 from collections import deque
 
@@ -45,13 +46,13 @@ class BriskMap():
 
         partial_paths = deque()
         for territory in player.territories:
-            partial_paths.append((territory,))
+            partial_paths.append(Path.create_with_single_territory(territory))
         while len(partial_paths) > 0:
             path = partial_paths.popleft()
             paths.append(path)
             for territory in path[-1].adjacent_territories:
                 if territory.player != player and territory not in path:
-                    partial_paths.append(path + (territory,))
+                    partial_paths.append(Path.create_by_appending_path_with_territory(path, territory))
 
         return paths
 

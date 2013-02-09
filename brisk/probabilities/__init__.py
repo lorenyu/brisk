@@ -1,1 +1,3 @@
 from RiskProbabilityCalculator import RiskProbabilityCalculator
+import strategies
+probability_calculator = RiskProbabilityCalculator()
