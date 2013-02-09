@@ -103,7 +103,7 @@ class BriskBotB():
                 # num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
                 # probability_of_conquering_territory_path = probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
                 value_of_conquering_territory_path = self.value_of_path(path)
-                path_value = value_of_conquering_territory_path * path.probability_of_conquering_path + player.num_armies_next_round * (1.0 - path.probability_of_conquering_path)
+                path_value = value_of_conquering_territory_path * path.probability_of_conquering_path
                 if path_value > best_path_value:
                     best_path = path
                     best_path_value = path_value
@@ -127,7 +127,7 @@ class BriskBotB():
             # num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
             # probability_of_conquering_territory_path = probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
             value_of_conquering_territory_path = self.value_of_path(path)
-            path_value = value_of_conquering_territory_path * path.probability_of_conquering_path + player.num_armies_next_round * (1.0 - path.probability_of_conquering_path)
+            path_value = value_of_conquering_territory_path * path.probability_of_conquering_path
             if path_value > best_path_value:
                 best_path = path
                 best_path_value = path_value
