@@ -4,7 +4,7 @@ from sys import stdout
 
 from pprint import pprint
 
-class BriskBotB():
+class BonusBot():
 
     def __init__(self, brisk_map, player):
         self.brisk_map = brisk_map
