@@ -7,8 +7,8 @@ class Brisk(object):
     def __init__(self, team_name):
         self.team_name = team_name
 
-    def create_new_game(self):
-        data = { 'join': True, 'team_name': self.team_name, 'no_bot': True }
+    def create_new_game(self, no_bot_flag=True):
+        data = { 'join': True, 'team_name': self.team_name, 'no_bot': no_bot_flag }
         res = self.post(self.url_root(), data)
         self.game_id = res['game']
         self.player_id = res['player']
