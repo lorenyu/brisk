@@ -49,6 +49,11 @@ class BriskMap():
             partial_paths.append(Path.create_with_single_territory(territory))
         while len(partial_paths) > 0:
             path = partial_paths.popleft()
+
+            # prune paths that have less than 5% chance of being conquered
+            if path.probability_of_conquering_path < 0.05:
+                continue
+
             paths.append(path)
             for territory in path[-1].adjacent_territories:
                 if territory.player != player and territory not in path:
