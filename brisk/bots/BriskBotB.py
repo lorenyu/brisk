@@ -79,7 +79,8 @@ class BriskBotB():
         # if df_p < 0:
         #     print player.id, path, df_p
 
-        return 0.0*dar_p + 0.0*da_p - 1.0*df_p + 0.0*daf_p - 0.0*dar_e - 0.0*da_e + 0.0*df_e - 0.0*daf_e
+        return ar_p1 - ar_e1
+        # return 0.0*dar_p + 0.0*da_p - 1.0*df_p + 0.0*daf_p - 0.0*dar_e - 0.0*da_e + 0.0*df_e - 0.0*daf_e
 
 
     def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
