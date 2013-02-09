@@ -15,6 +15,14 @@ class Path:
     def __repr__(self):
         return repr(self.territories)
 
+    def probability_of_conquering_path_with_num_armies_left(self, num_armies):
+        if not self.probability_of_conquering_path_by_num_armies_left.has_key(num_armies):
+            return 0.0
+        return self.probability_of_conquering_path_by_num_armies_left[num_armies]
+
+    def expected_num_armies_left(self):
+        return sum([a * p_a for a, p_a in self.probability_of_conquering_path_by_num_armies_left.iteritems()])
+
     @staticmethod
     def create_with_single_territory(territory):
         result = Path((territory,))
