@@ -89,13 +89,15 @@ class BriskBotB():
         best_path = self.get_best_path( attacker_territory.player )
         # Now, figure out if attacker_territory is a frontier in this new best_path
         # For that, create a TempMapState and set the player controlling all territories
+        if not best_path:
+            return 0
         for territory in best_path:
             temp_map_state.set_player_controlling_territory( territory, attacker_territory.player )
         temp_map_state.compute_map_values()
-        #assert defender_territory.player.id == attacker_territory.player.id
-        #if defender_territory not in temp_map_state.fronts_for_player(defender_territory.player):
-        #    if defender_territory not in best_path:
-        #        return 0
+        assert defender_territory.player.id == attacker_territory.player.id
+        if defender_territory not in temp_map_state.fronts_for_player(defender_territory.player):
+            if defender_territory not in best_path:
+                return 0
         if attacker_territory in temp_map_state.fronts_for_player( attacker_territory.player):
             max_enemy_troops_in_adj = 0
             for territory in attacker_territory.adjacent_territories:
