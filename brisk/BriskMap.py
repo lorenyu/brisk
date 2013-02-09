@@ -75,6 +75,8 @@ class BriskMap():
     def create(map_layout, game_state_data):
         brisk_map = BriskMap()
 
+        brisk_map.num_players = game_state_data['num_players']
+
         for territory_data in map_layout['territories']:
             territory = Territory(territory_data['territory'], territory_data['territory_name'])
             brisk_map.add_territory(territory)
