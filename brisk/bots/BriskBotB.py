@@ -83,7 +83,40 @@ class BriskBotB():
 
 
     def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
+        temp_map_state = TempMapState(self.brisk_map)
+        # Now we have the map post attack. Get the best path for this new map
+        best_path = self.get_best_path( attacker_territory.player )
+        # Now, figure out if attacker_territory is a frontier in this new best_path
+        # For that, create a TempMapState and set the player controlling all territories
+        for territory in best_path:
+            temp_map_state.set_player_controlling_territory( territory, attacker_territory.player )
+        temp_map_state.compute_map_values()
+        if attacker_territory in temp_map_state.fronts_for_player( attacker_territory.player):
+            max_enemy_troops_in_adj = 0
+            for territory in attacker_territory.adjacent_territories:
+                if territory.player.id != attacker_territory.player.id:
+                    if territory.num_armies > max_enemy_troops_in_adj:
+                        max_enemy_troops_in_adj = territory.num_armies
+            numToTransfer = attacker_territory.num_armies - max_enemy_troops_in_adj
+            if numToTransfer < 0:
+                numToTransfer = 0
+            if numToTransfer == attacker_territory.num_armies:
+                numToTransfer -= 1
+            return numToTransfer
         return attacker_territory.num_armies - 1
+
+    def get_best_path( self, player ):
+        best_path = None
+        best_path_value = float('-inf')
+        for path in self.brisk_map.get_paths_accessible_by_player(player):
+            if len(path) <= 1:
+                continue
+            value_of_conquering_territory_path = self.value_of_path(path)
+            path_value = value_of_conquering_territory_path * path.probability_of_conquering_path
+            if path_value > best_path_value:
+                best_path = path
+                best_path_value = path_value
+        return best_path
 
     def compute_next_action(self):
 
@@ -96,18 +129,7 @@ class BriskBotB():
         max_armies_in_territory = max([territory.num_armies for territory in player.territories])
 
         if player.num_reserves > 0 and len(player.territories) > 0:
-            best_path = None
-            best_path_value = float('-inf')
-            for path in self.brisk_map.get_paths_accessible_by_player(player, max_armies_in_territory + player.num_reserves):
-                # num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
-                # num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
-                # probability_of_conquering_territory_path = probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
-                value_of_conquering_territory_path = self.value_of_path(path)
-                path_value = value_of_conquering_territory_path * path.probability_of_conquering_path
-                if path_value > best_path_value:
-                    best_path = path
-                    best_path_value = path_value
-
+            best_path = self.get_best_path( player )
             if best_path:
                 territory = best_path[0]
             else:
@@ -118,19 +140,7 @@ class BriskBotB():
                 'num_armies': player.num_reserves
             }
 
-        best_path = None
-        best_path_value = float('-inf')
-        for path in self.brisk_map.get_paths_accessible_by_player(player):
-            if len(path) <= 1:
-                continue
-            # num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
-            # num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
-            # probability_of_conquering_territory_path = probability_calculator.probability_of_conquering_territory_path((num_armies_in_attacking_territory, num_armies_in_defending_territories))
-            value_of_conquering_territory_path = self.value_of_path(path)
-            path_value = value_of_conquering_territory_path * path.probability_of_conquering_path
-            if path_value > best_path_value:
-                best_path = path
-                best_path_value = path_value
+        best_path = self.get_best_path( player )
 
         if best_path:
             attacker_territory = best_path[0]

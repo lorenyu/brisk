@@ -10,7 +10,7 @@ class TempMapState:
         self.num_fronts_by_player_id = None
         self.num_armies_by_player_id = None
         self.num_armies_at_front_by_player_id = None
-        
+        self.fronts_by_player_id = {}
 
     def set_player_controlling_territory(self, territory, player):
         self.players_controlling_territory_by_territory_id[territory.id] = player
@@ -31,17 +31,22 @@ class TempMapState:
         for territory in self.brisk_map.territories:
             player = self.player_controlling_territory(territory)
             num_armies = self.num_armies_in_territory(territory)
-
+            if player.id not in self.fronts_by_player_id.keys():
+                self.fronts_by_player_id[player.id] = []
             self.num_armies_by_player_id[player.id] += num_armies
-
+            
             self.num_controlled_territories_by_player_id[player.id] += 1
             self.num_controlled_territories_by_player_id_and_continent_id[(player.id, territory.continent.id)] += 1
             if self.num_controlled_territories_by_player_id_and_continent_id[(player.id, territory.continent.id)] == len(territory.continent.territories):
                 self.controlled_continents_by_player_id[player.id].append(territory.continent)
 
             if any([self.player_controlling_territory(adjacent_territory) != player for adjacent_territory in territory.adjacent_territories]):
+                self.fronts_by_player_id[player.id].append( territory )
                 self.num_fronts_by_player_id[player.id] += 1
                 self.num_armies_at_front_by_player_id[player.id] += num_armies
+
+    def fronts_for_player( self, player ):
+        return self.fronts_by_player_id[player.id]
 
     def num_armies_for_player(self, player):
         return self.num_armies_by_player_id[player.id]
