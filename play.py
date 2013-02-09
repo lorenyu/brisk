@@ -9,7 +9,7 @@ def main(args):
     # if args.game_id:
     #     brisk = Brisk(game_id=args.game_id)
     brisks = []
-    brisks.append(Brisk('bot A'))
+    brisks.append(Brisk('Mocheese'))
     #brisks.append(Brisk('bot B'))
 
     brisks[0].create_new_game(False)
@@ -54,6 +54,7 @@ def main(args):
                 print 'Not player', i,"'s turn"
                 #i = (i + 1) % 2
                 sleep(1)
+                brisk_observer.update(brisk)
                 continue
 
             action, params = bot.compute_next_action()
