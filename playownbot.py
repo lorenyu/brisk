@@ -75,6 +75,7 @@ def main(args):
                 print 'player ', player.id, 'attacked', defender_territory, 'from', attacker_territory
                 result = brisk.attack(attacker_territory.id, defender_territory.id, num_armies)
                 if result['defender_territory_captured']:
+                    defender_territory.player = attacker_territory.player                    
                     attacker_territory.num_armies = result['attacker_territory_armies_left']
                     defender_territory.num_armies = result['defender_territory_armies_left']
                     num_armies = bot.compute_num_armies_to_transfer(attacker_territory, defender_territory)
