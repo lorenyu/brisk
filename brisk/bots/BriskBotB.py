@@ -34,6 +34,18 @@ class BriskBotB():
         enemy = self.enemy
 
         temp_map_state = TempMapState(brisk_map)
+
+        temp_map_state.compute_map_values()
+
+        a_p0 = temp_map_state.num_armies_for_player(player)
+        f_p0 = temp_map_state.num_fronts_for_player(player)
+        af_p0 = temp_map_state.num_armies_at_front_for_player(player)
+        ar_p0 = temp_map_state.num_armies_next_round_for_player(player)
+        a_e0 = temp_map_state.num_armies_for_player(enemy)
+        f_e0 = temp_map_state.num_fronts_for_player(enemy)
+        af_e0 = temp_map_state.num_armies_at_front_for_player(enemy)
+        ar_e0 = temp_map_state.num_armies_next_round_for_player(enemy)
+
         for territory in path[1:]:
             temp_map_state.set_player_controlling_territory(territory, player)
             temp_map_state.set_num_armies_for_territory(territory, 1)
@@ -41,16 +53,33 @@ class BriskBotB():
 
         temp_map_state.compute_map_values()
 
-        a_p = temp_map_state.num_armies_for_player(player)
-        f_p = temp_map_state.num_fronts_for_player(player)
-        af_p = temp_map_state.num_armies_at_front_for_player(player)
-        ar_p = temp_map_state.num_armies_next_round_for_player(player)
-        a_e = temp_map_state.num_armies_for_player(enemy)
-        f_e = temp_map_state.num_fronts_for_player(enemy)
-        af_e = temp_map_state.num_armies_at_front_for_player(enemy)
-        ar_e = temp_map_state.num_armies_next_round_for_player(enemy)
+        a_p1 = temp_map_state.num_armies_for_player(player)
+        f_p1 = temp_map_state.num_fronts_for_player(player)
+        af_p1 = temp_map_state.num_armies_at_front_for_player(player)
+        ar_p1 = temp_map_state.num_armies_next_round_for_player(player)
+        a_e1 = temp_map_state.num_armies_for_player(enemy)
+        f_e1 = temp_map_state.num_fronts_for_player(enemy)
+        af_e1 = temp_map_state.num_armies_at_front_for_player(enemy)
+        ar_e1 = temp_map_state.num_armies_next_round_for_player(enemy)
 
-        return 1.0*a_p + 0.0*f_p + 0.0*af_p + 0.0*ar_p - 0.0*a_e - 0.0*f_e - 0.0*af_e - 0.0*ar_e
+        # compute deltas
+        dar_p = ar_p1 - ar_p0 # change in num armies per round for player
+        dar_e = ar_e1 - ar_e0 # change in num armies per round for enemy
+
+        da_p = a_p1 - a_p0 # change in number of armies for player
+        da_e = a_e1 - a_e0 # change in number of armies for enemy
+
+        df_p = f_p1 - f_p0 # change in fronts for player
+        df_e = f_e1 - f_e0 # change in fronts for enemy
+
+        daf_p = af_p1 - af_p0 # change in number of armies at front for player
+        daf_e = af_e1 - af_e0 # change in number of armies at front for enemy
+
+        # print player.id, path, dar_p, df_p, f_p0, f_p1
+        # if df_p < 0:
+        #     print player.id, path, df_p
+
+        return 0.0*dar_p + 0.0*da_p - 1.0*df_p + 0.0*daf_p - 0.0*dar_e - 0.0*da_e + 0.0*df_e - 0.0*daf_e
 
 
     def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
@@ -68,7 +97,7 @@ class BriskBotB():
 
         if player.num_reserves > 0 and len(player.territories) > 0:
             best_path = None
-            best_path_value = 0.0
+            best_path_value = float('-inf')
             for path in self.brisk_map.get_paths_accessible_by_player(player, max_armies_in_territory + player.num_reserves):
                 # num_armies_in_attacking_territory = path[0].num_armies + player.num_reserves
                 # num_armies_in_defending_territories = [territory.num_armies for territory in path[1:]]
@@ -90,7 +119,7 @@ class BriskBotB():
             }
 
         best_path = None
-        best_path_value = 0.0
+        best_path_value = float('-inf')
         for path in self.brisk_map.get_paths_accessible_by_player(player):
             if len(path) <= 1:
                 continue
