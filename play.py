@@ -18,6 +18,7 @@ def main(args):
     players = [Player.get(brisk.player_id) for brisk in brisks]
 
     while not brisk.get_player_status()['current_turn']:
+        print "Game hasn't started yet"
         sleep(1)
 
     map_layout = brisks[0].get_map_layout()
