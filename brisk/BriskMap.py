@@ -92,6 +92,11 @@ class BriskMap():
             for territory in territories:
                 territory.continent = continent
             brisk_map.add_continent(continent)
+            
+        for continent in brisk_map.continents:
+            for territory in continent.territories:
+                if any([adjacent_territory.continent != continent for adjacent_territory in territory.adjacent_territories]):
+                    continent.boundary_territories.append(territory)
 
         brisk_map.update(game_state_data)
 

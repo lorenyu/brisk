@@ -7,6 +7,8 @@ class Continent():
         self.bonus = bonus
         self.name = name
         self.territories = territories
+        self.boundary_territories = []
+
 
     def __eq__(self, other):
         return self.id == other.id
