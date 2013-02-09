@@ -19,7 +19,8 @@ class Path:
     def create_with_single_territory(territory):
         result = Path((territory,))
         result.probability_of_conquering_path = 1.0
-        result.probability_of_conquering_path_by_num_armies_left[territory.num_armies] = 1.0
+        for num_armies in range(territory.num_armies, territory.num_armies + territory.player.num_reserves + 1):
+            result.probability_of_conquering_path_by_num_armies_left[num_armies] = 1.0
         return result
 
     @staticmethod
