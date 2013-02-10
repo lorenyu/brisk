@@ -42,7 +42,13 @@ def main(args):
         try:
             player_status = brisk.get_player_status()
 
-            game_state = brisk.get_game_state()
+            while True:
+                game_state = brisk.get_game_state()
+                if game_state['territories']:
+                    break
+                print game_state
+                sleep(1)
+
             brisk_map.update(game_state)
             for brisk, player in zip(brisks, players):
                 player.update(brisk.get_player_status(), brisk_map)
