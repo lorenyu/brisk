@@ -166,7 +166,7 @@ class BriskBotB():
                 territory = best_path[0]
             else:
                 territory = player.territories[0]
-            # pprint(best_path)
+                 # pprint(best_path)
             return 'place_armies', {
                 'territory': territory,
                 'num_armies': player.num_reserves
@@ -214,10 +214,10 @@ class BriskBotB():
                         src_territory = territory
                         dst_territory = front
                     elif front.num_armies == dst_territory.num_armies and ( territory.num_armies - 1 ) > delta_to_front:
-                            delta_to_front = territory.num_armies - 1
-                            src_territory = territory
-                            dst_territory = front
-        if not src_territory:
+                        delta_to_front = territory.num_armies - 1
+                        src_territory = territory
+                        dst_territory = front
+        if not src_territory or delta_to_front == 0:
             dst_territory = None
             for front in fronts:
                 for territory in front.adjacent_territories:
