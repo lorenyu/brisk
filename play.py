@@ -100,6 +100,9 @@ def main(args):
                 print ctime(), "player ", player.id, 'fortified ', num_armies, 'armies from ', from_territory, 'to', to_territory
                 if num_armies > 0:
                     brisk.transfer_armies( from_territory.id, to_territory.id, num_armies )
+                else:
+                    print ctime(), 'player ', player.id, 'ended their turn'
+                    brisk.end_turn()
             elif action == 'end_turn':
                 #i = (i + 1) % 2
                 print ctime(), 'player ', player.id, 'ended their turn'

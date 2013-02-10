@@ -85,21 +85,34 @@ class BriskBotB():
 
 
     def compute_num_armies_to_transfer(self, attacker_territory, defender_territory):
-        temp_map_state = TempMapState(self.brisk_map)
+        player = attacker_territory.player
         # Now we have the map post attack. Get the best path for this new map
-        best_path = self.get_best_path( attacker_territory.player )
         # Now, figure out if attacker_territory is a frontier in this new best_path
         # For that, create a TempMapState and set the player controlling all territories
-        if not best_path:
+
+        temp_map_state = TempMapState(self.brisk_map)
+        temp_map_state.compute_map_values()
+
+        fronts = temp_map_state.fronts_for_player(player)
+
+        is_defender_territory_a_front = defender_territory in fronts
+        is_attacker_territory_a_front = attacker_territory in fronts
+
+        best_path = self.get_best_path( player )
+        if not best_path: # end of game
             return 0
         for territory in best_path:
-            temp_map_state.set_player_controlling_territory( territory, attacker_territory.player )
+            temp_map_state.set_player_controlling_territory( territory, player )
         temp_map_state.compute_map_values()
-        assert defender_territory.player.id == attacker_territory.player.id
-        if defender_territory not in temp_map_state.fronts_for_player(defender_territory.player):
-            if defender_territory not in best_path:
-                return 0
-        if attacker_territory in temp_map_state.fronts_for_player( attacker_territory.player):
+
+        possible_new_fronts = temp_map_state.fronts_for_player(player)
+        will_defender_territory_be_a_front = defender_territory in possible_new_fronts
+        will_attacker_territory_be_a_front = attacker_territory in possible_new_fronts
+
+        if not is_defender_territory_a_front and not will_defender_territory_be_a_front:
+            return 0
+
+        if is_attacker_territory_a_front and will_attacker_territory_be_a_front:
             max_enemy_troops_in_adj = 0
             for territory in attacker_territory.adjacent_territories:
                 if territory.player.id != attacker_territory.player.id:
@@ -111,6 +124,17 @@ class BriskBotB():
             if numToTransfer == attacker_territory.num_armies:
                 numToTransfer -= 1
             return numToTransfer
+
+        if not is_attacker_territory_a_front and is_defender_territory_a_front:
+            return attacker_territory.num_armies - 1
+
+        if is_attacker_territory_a_front and not will_attacker_territory_be_a_front and not is_defender_territory_a_front:
+            return 0
+
+        # last case
+        if not is_attacker_territory_a_front and not is_defender_territory_a_front:
+            return attacker_territory.num_armies - 2
+
         return attacker_territory.num_armies - 1
 
     def get_best_path( self, player ):
@@ -185,14 +209,14 @@ class BriskBotB():
                         continue
                     if territory in fronts:
                         continue
-                if front.num_armies < dst_territory.num_armies:
-                    delta_to_front = territory.num_armies - 1
-                    src_territory = territory
-                    dst_territory = front
-                elif front.num_armies == dst_territory.num_armies and ( territory.num_armies - 1 ) > delta_to_front:
+                    if front.num_armies < dst_territory.num_armies:
                         delta_to_front = territory.num_armies - 1
                         src_territory = territory
                         dst_territory = front
+                    elif front.num_armies == dst_territory.num_armies and ( territory.num_armies - 1 ) > delta_to_front:
+                            delta_to_front = territory.num_armies - 1
+                            src_territory = territory
+                            dst_territory = front
         if not src_territory:
             dst_territory = None
             for front in fronts:
