@@ -12,6 +12,7 @@ class Brisk(object):
         res = self.post(self.url_root(), data)
         self.game_id = res['game']
         self.player_id = res['player']
+        # self.token = res['token']
         self.token = '4f2bb842e325bf5eaca6c98764f1bf5249802e33'
         return res
 
@@ -20,6 +21,7 @@ class Brisk(object):
         res = self.post(self.url_root(), data)
         self.game_id = res['game']
         self.player_id = res['player']
+        # self.token = res['token']
         self.token = '4f2bb842e325bf5eaca6c98764f1bf5249802e33'
         return res
 
