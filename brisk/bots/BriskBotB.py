@@ -170,26 +170,52 @@ class BriskBotB():
         src_territory = None
         dst_territory = None
         for front in fronts:
-            for territory in front.adjacent_territories:
-                if territory.player != player:
-                    continue
-                if territory in fronts:
-                    continue
-                if ( territory.num_armies - 1 ) > delta_to_front:
+            if dst_territory is None:
+                dst_territory = front
+            continent = front.continent
+            continent_player = continent.player
+            # If we own the continent this front is in
+            if continent_player and continent_player == player:
+                # If the front is at the boundary, which by definition it must be
+                if front not in continent.boundary_territories:
+                    print front
+                    assert 0
+                for territory in front.adjacent_territories:
+                    if territory.player != player:
+                        continue
+                    if territory in fronts:
+                        continue
+                if front.num_armies < dst_territory.num_armies:
                     delta_to_front = territory.num_armies - 1
                     src_territory = territory
                     dst_territory = front
-                elif ( ( territory.num_armies - 1 ) == delta_to_front ) and delta_to_front > 0:
-                    if front.num_armies < dst_territory.num_armies:
+                elif front.num_armies == dst_territory.num_armies and ( territory.num_armies - 1 ) > delta_to_front:
                         delta_to_front = territory.num_armies - 1
                         src_territory = territory
                         dst_territory = front
-            if dst_territory and src_territory:
-                return 'transfer_armies', {
-                    'from_territory': src_territory,
-                    'to_territory': dst_territory,
-                    'num_armies': delta_to_front
-                    }
+        if not src_territory:
+            dst_territory = None
+            for front in fronts:
+                for territory in front.adjacent_territories:
+                    if territory.player != player:
+                        continue
+                    if territory in fronts:
+                        continue
+                    if( territory.num_armies - 1 ) > delta_to_front:
+                        delta_to_front = territory.num_armies - 1
+                        src_territory = territory
+                        dst_territory = front
+                    elif ( ( territory.num_armies - 1 ) == delta_to_front ) and delta_to_front > 0:
+                        if front.num_armies < dst_territory.num_armies:
+                            delta_to_front = territory.num_armies - 1
+                            src_territory = territory
+                            dst_territory = front
+        if dst_territory and src_territory:
+            return 'transfer_armies', {
+                'from_territory': src_territory,
+                'to_territory': dst_territory,
+                'num_armies': delta_to_front
+                }
         return 'end_turn', ()
 
 class ContinentStats():
