@@ -12,7 +12,10 @@ def main(args):
     brisks.append(Brisk('Mocheese'))
     #brisks.append(Brisk('bot B'))
 
-    brisks[0].create_new_game(False)
+    if (args.game_id):
+        brisks[0].join_game(args.game_id)
+    else:
+        brisks[0].create_new_game(False)
     #brisks[1].join_game(brisks[0].game_id)
 
     print 'game', brisks[0].game_id
@@ -108,7 +111,7 @@ def main(args):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-g', '--game-id', dest='game_id', type=int)
+parser.add_argument('-g', '--game-id', dest='game_id', type=int, default=0)
 parser.set_defaults(func=main)
 
 args = parser.parse_args()
