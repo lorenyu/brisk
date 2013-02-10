@@ -35,7 +35,7 @@ def main(args):
     #bots.append(BriskBotB(brisk_map, players[1]))
 
     brisk_observer = BriskObserver()
-
+    print "Game ID", brisks[0].game_id
     i = 0
     while True:        
 
@@ -97,8 +97,9 @@ def main(args):
                 from_territory = params['from_territory']
                 to_territory = params['to_territory']
                 num_armies = params['num_armies']
-                brisk.transfer_armies( from_territory.id, to_territory.id, num_armies )
                 print ctime(), "player ", player.id, 'fortified ', num_armies, 'armies from ', from_territory, 'to', to_territory
+                if num_armies > 0:
+                    brisk.transfer_armies( from_territory.id, to_territory.id, num_armies )
             elif action == 'end_turn':
                 #i = (i + 1) % 2
                 print ctime(), 'player ', player.id, 'ended their turn'
