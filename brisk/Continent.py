@@ -8,6 +8,7 @@ class Continent():
         self.name = name
         self.territories = territories
         self.boundary_territories = []
+        self.player = None
 
 
     def __eq__(self, other):
@@ -21,14 +22,3 @@ class Continent():
 
     def __hash__(self):
         return hash(repr(self))
-
-    @property
-    def player(self):
-        player_ids_in_continent = set()
-        for territory in self.territories:
-            player_ids_in_continent.add(territory.player.id)
-        
-        if len(player_ids_in_continent) == 1:
-            return Player.get(player_ids_in_continent.pop())
-
-        return None
