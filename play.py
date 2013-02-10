@@ -70,7 +70,7 @@ def main(args):
                 if num_armies <= 0:
                     print 'Cannot place zero armies'
                     continue
-                print 'player ', player.id, 'placed', num_armies, 'in', territory, 'at', ctime()
+                print ctime(), 'player ', player.id, 'placed', num_armies, 'in', territory
                 brisk.place_armies(territory.id, num_armies)
             elif action == 'attack':
                 attacker_territory = params['attacker_territory']
@@ -79,14 +79,14 @@ def main(args):
                 if num_armies <= 0:
                     print 'Cannot attack with zero armies'
                     continue
-                print 'player ', player.id, 'attacked', defender_territory, 'from', attacker_territory
+                print ctime(), 'player ', player.id, 'attacked', defender_territory, 'from', attacker_territory
                 result = brisk.attack(attacker_territory.id, defender_territory.id, num_armies)
                 if result['defender_territory_captured']:
                     defender_territory.player = attacker_territory.player
                     attacker_territory.num_armies = result['attacker_territory_armies_left']
                     defender_territory.num_armies = result['defender_territory_armies_left']
                     num_armies = bot.compute_num_armies_to_transfer(attacker_territory, defender_territory)
-                    print 'player ', player.id, 'transferred', num_armies, 'armies from', attacker_territory, 'to', defender_territory, 'at', ctime()
+                    print ctime(), 'player ', player.id, 'transferred', num_armies, 'armies from', attacker_territory, 'to', defender_territory
                     if num_armies > 0:
                         brisk.transfer_armies(attacker_territory.id, defender_territory.id, num_armies)
             elif action == 'transfer_armies':
@@ -95,10 +95,10 @@ def main(args):
                 to_territory = params['to_territory']
                 num_armies = params['num_armies']
                 brisk.transfer_armies( from_territory.id, to_territory.id, num_armies )
-                print "player ", player.id, 'fortified ', num_armies, 'armies from ', from_territory, 'to', to_territory, 'at', ctime()
+                print ctime(), "player ", player.id, 'fortified ', num_armies, 'armies from ', from_territory, 'to', to_territory
             elif action == 'end_turn':
                 #i = (i + 1) % 2
-                print 'player ', player.id, 'ended their turn', 'at', ctime()
+                print ctime(), 'player ', player.id, 'ended their turn'
                 brisk.end_turn()
             
             brisk_observer.update(brisk)
