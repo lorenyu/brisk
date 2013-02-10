@@ -78,7 +78,7 @@ class Player():
         return self.id != other.id
 
     def __repr__(self):
-        return '<Player:' + str(self.id) + ':' + self.name + '>'
+        return '<Player:' + str(self.id) + '>'
 
     def __hash__(self):
         return hash(repr(self))
