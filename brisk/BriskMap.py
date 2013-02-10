@@ -75,9 +75,8 @@ class BriskMap():
             player_ids_in_continent = set()
             for territory in continent.territories:
                 player_ids_in_continent.add(territory.player.id)
-                if len(player_ids_in_continent) == 1:
-                    continent.player = Player.get(player_ids_in_continent.pop())
-                    break
+            if len(player_ids_in_continent) == 1:
+                continent.player = Player.get(player_ids_in_continent.pop())
             else:
                 continent.player = None
 
