@@ -15,6 +15,8 @@ def main(args):
     brisks[0].create_new_game(False)
     #brisks[1].join_game(brisks[0].game_id)
 
+    print 'game', brisks[0].game_id
+
     players = [Player.get(brisk.player_id) for brisk in brisks]
 
     while not brisk.get_player_status()['current_turn']:
