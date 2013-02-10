@@ -62,6 +62,12 @@ class TempMapState:
         continents = self.controlled_continents_by_player_id[player.id]
         return TempMapState.compute_num_armies_per_round(num_territories, continents)
 
+    def num_discounted_armies_next_round_for_player(self, player):
+        num_territories = self.num_controlled_territories_by_player_id[player.id]
+        continents = self.controlled_continents_by_player_id[player.id]
+        return TempMapState.compute_discounted_num_armies_per_round(num_territories, continents)
+
+
     # def push_state(self, players_controlling_territory_by_territory_id={}, num_armies_by_territory_id = {}):
     #     self.temp_states.append((players_controlling_territory_by_territory_id, num_armies_by_territory_id))
 
@@ -83,3 +89,10 @@ class TempMapState:
         base = num_territories / 3.0
         bonus = sum([continent.bonus for continent in continents])
         return base + bonus
+
+    @staticmethod
+    def compute_discounted_num_armies_per_round(num_territories, continents):
+        base = num_territories / 3.0
+        bonus = sum([continent.bonus for continent in continents])
+        return base + bonus
+        

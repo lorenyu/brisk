@@ -57,6 +57,7 @@ class BriskBotB():
         f_p1 = temp_map_state.num_fronts_for_player(player)
         af_p1 = temp_map_state.num_armies_at_front_for_player(player)
         ar_p1 = temp_map_state.num_armies_next_round_for_player(player)
+        adr_p1 = temp_map_state.num_discounted_armies_next_round_for_player(player)
         a_e1 = temp_map_state.num_armies_for_player(enemy)
         f_e1 = temp_map_state.num_fronts_for_player(enemy)
         af_e1 = temp_map_state.num_armies_at_front_for_player(enemy)
@@ -79,7 +80,7 @@ class BriskBotB():
         # if df_p < 0:
         #     print player.id, path, df_p
 
-        return 0.8*ar_p1 - 1.0*ar_e1 - 0.01*df_p
+        return adr_p1 - 1.0*ar_e1 - 0.01*df_p
         # return 0.0*dar_p + 0.0*da_p - 1.0*df_p + 0.0*daf_p - 0.0*dar_e - 0.0*da_e + 0.0*df_e - 0.0*daf_e
 
 
